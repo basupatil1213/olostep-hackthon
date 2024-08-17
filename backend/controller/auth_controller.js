@@ -30,9 +30,7 @@ export const loginController = async (req, res) => {
         const { email, password } = req.body;
         const result = await login(email, password);
         if (result) {
-            res.status(200).send({
-                token: result
-            });
+            res.status(200).send(result);
         } else {
             res.status(500).send({
                 message: "email or password is incorrect"

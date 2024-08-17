@@ -28,12 +28,13 @@ export const getBrowserContent = async (url) => {
     }
 }
 
-export const saveWebScrap = async ({title, body, url}) => {
+export const saveWebScrap = async ({title, body, url, user}) => {
     try {
         const newWebScrap = new WebScrap({
             title,
             body,
             url,
+            user
         });
         await newWebScrap.save();
         return newWebScrap;

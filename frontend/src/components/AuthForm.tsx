@@ -36,6 +36,7 @@ const AuthForm = ({type} : {type : 'login' | 'register'}) => {
       const data = await response.json();
       console.log(data);
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
       navigate('/scrap');
 
     } catch (err) {

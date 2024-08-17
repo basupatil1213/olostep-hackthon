@@ -13,8 +13,8 @@ export const getWebScrap = async (req, res) => {
 }
 
 export const saveWebScrapController = async (req, res) => {
-    const {title, body, url} = req.body;
-    const result = await saveWebScrap({title, body, url});
+    const {title, body, url, user} = req.body;
+    const result = await saveWebScrap({title, body, url, user});
     if (result) {
         res.status(200).send(result);
     } else {

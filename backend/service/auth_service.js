@@ -23,20 +23,35 @@ export const register = async (email, password, name) => {
 }
 
 export const login = async (email, password) => {
-    console.log("Inside login service");
-    console.log(`Email: ${email} Password: ${password}`);
-    const user = await User.findOne({email});
-    if (!user) {
-        throw new Error("User does not exist");
-        
-    }
+    try {
+        console.log("Inside login service");
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-        return null;
-    }
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            console.error("User does not exist");
+            throw new Error("User does not exist");
+        }
 
-    const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
-    console.log(`Successfully logged in: ${token}`);
-    return token;
-}
+        // Verify password
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            console.error("Invalid password");
+            return null; // or throw an error if you prefer
+        }
+
+        // Remove password from user object
+        const userWithoutPassword = user.toObject();
+        delete userWithoutPassword.password;
+
+        // Generate token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // Adjust token expiration as needed
+        console.log(`Successfully logged in: ${token}`);
+
+        // Return token and user (without password)
+        return { token, user: userWithoutPassword };
+    } catch (error) {
+        console.error("Error during login:", error.message);
+        throw new Error("Internal server error");
+    }
+};

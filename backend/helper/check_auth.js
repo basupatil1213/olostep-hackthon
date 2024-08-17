@@ -8,9 +8,9 @@ export const checkAuth = (req, res, next) => {
         jwt.verify(tokenString, process.env.JWT_SECRET, (err, user) => {
             if (err) {
                 res.status(403).send("Forbidden access");
+                return;
             } else {
                 req.user = user;
-                next();
             }
         });
         next();
