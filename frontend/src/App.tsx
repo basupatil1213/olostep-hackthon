@@ -1,14 +1,15 @@
-import './App.css'
-import WebScrap from './Pages/WebScrap'
+import "./App.css";
+import { BrowserRouter as Router } from "react-router-dom";
+import Routes from "./routes/routes";
 
 function App() {
-
-  return (
-    <>
-      <h1>OloStep</h1>
-      <WebScrap />
-    </>
-  )
+    return (
+        <Router>
+            <main>
+                <Routes />
+            </main>
+        </Router>
+    );
 }
 
-export default App
+export default App;

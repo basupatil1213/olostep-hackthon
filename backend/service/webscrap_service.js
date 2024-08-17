@@ -20,7 +20,7 @@ export const getBrowserContent = async (url) => {
         //     return {title: webscrap.title, body: webscrap.body};
         // }
         const {title, body} = await gbc(url);
-        return {title, body};
+        return {title, body, url};
     }
     catch (error) {
         console.error(`Error: ${error.message}`);

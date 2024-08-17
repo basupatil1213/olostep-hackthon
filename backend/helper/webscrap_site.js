@@ -21,7 +21,7 @@ const getBrowserContent = async (url) => {
 
     // get the content of the page
     const body = await page.evaluate(() => {
-        return document.body.outerHTML;
+        return document.body.innerHTML;
     }
     );
 
