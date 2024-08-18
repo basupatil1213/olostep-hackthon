@@ -1,4 +1,4 @@
-import { getBrowserContent, saveWebScrap, getAllWebScraps } from "../service/webscrap_service.js";
+import { getBrowserContent, saveWebScrap, getAllWebScrapsById } from "../service/webscrap_service.js";
 
 export const getWebScrap = async (req, res) => {
 
@@ -14,7 +14,7 @@ export const getWebScrap = async (req, res) => {
 
 export const saveWebScrapController = async (req, res) => {
     const {title, body, url, user} = req.body;
-    const result = await saveWebScrap({title, body, url, user});
+    const result = await saveWebScrap(title, body, url, user);
     if (result) {
         res.status(200).send(result);
     } else {
@@ -23,9 +23,13 @@ export const saveWebScrapController = async (req, res) => {
 }
 
 export const getAllWebScrapsController = async (req, res) => {
-    const result = await getAllWebScraps();
+    console.log(`Inside controller: ${JSON.stringify(req.user)}`);
+    const user = req.user;
+    const result = await getAllWebScrapsById(user.id);
     if (result) {
-        res.status(200).send(result);
+        res.status(200).send({
+            data : result
+        });
     } else {
         res.status(500).send("Error: Unable to get the content");
     }
