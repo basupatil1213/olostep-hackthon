@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
 import CodeSnippet from "../components/DisplayCode";
 import { BASE_URL } from "../App";
+import { toast, ToastContainer } from "react-toastify";
 
 const WebScrap = () => {
   const [url, setUrl] = useState<string>("");
@@ -54,7 +55,7 @@ const WebScrap = () => {
 
   const handleSave = async () => {
     if (!data) {
-      alert("No data to save");
+      toast.error("No data to save");
       return;
     }
 
@@ -81,15 +82,16 @@ const WebScrap = () => {
         throw new Error("Failed to save data");
       }
       const respData = await response.json();
-      alert(`Data saved with id: ${respData.id}`);
+      toast.success(`Data saved with title: ${respData.title}`);
     } catch (err) {
       console.error(err);
-      alert("Failed to save data");
+      toast.error("Failed to save data");
     }
   };
 
   return (
     <div className="container mx-auto p-4 w-screen">
+        <ToastContainer/>
       <h1 className="text-3xl font-bold mb-4">Web Scraping</h1>
       <div className="mb-4">
         <Input value={url} setValue={setUrl} />
