@@ -1,42 +1,44 @@
-/* #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* Reset some basic styles for consistent rendering across browsers */
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  height: 100%;
+  font-family: 'Roboto', sans-serif; /* Use a clean, modern font */
+  background-color: #f5f5f5; /* Light background for a modern look */
+  color: #333; /* Dark text for readability */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Ensure the App uses the full viewport height */
+#root, .App {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Main content area should take up the remaining space below the NavBar */
+main {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: white; /* White background for the main content */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for a professional look */
+  margin: 20px; /* Margin around the main content */
+  border-radius: 10px; /* Rounded corners for modern design */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Optional: Global link styling */
+a {
+  text-decoration: none;
+  color: #007bff; /* Standard blue for links */
 }
 
-.card {
-  padding: 2em;
+a:hover {
+  text-decoration: underline;
 }
 
-.read-the-docs {
-  color: #888;
-} */
+/* Ensure the NavBar sticks to the top */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
