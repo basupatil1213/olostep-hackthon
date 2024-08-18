@@ -11,6 +11,6 @@ webscrap_router.route('/save')
 
 
 webscrap_router.route('/all')
-    .get(getAllWebScrapsController);
+    .post(getAllWebScrapsController);
 
 export default webscrap_router;

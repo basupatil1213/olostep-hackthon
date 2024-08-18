@@ -2,9 +2,9 @@ import WebScrap from "../models/WebScrap.js";
 import gbc from "../helper/webscrap_site.js";
 
 
-export const getAllWebScraps = async () => {
+export const getAllWebScrapsById = async (id) => {
     try {
-        const webscraps = await WebScrap.find();
+        const webscraps = await WebScrap.find({user: id});
         return webscraps;
     } catch (error) {
         console.error(`Error: ${error.message}`);
@@ -28,7 +28,7 @@ export const getBrowserContent = async (url) => {
     }
 }
 
-export const saveWebScrap = async ({title, body, url, user}) => {
+export const saveWebScrap = async (title, body, url, user) => {
     try {
         const newWebScrap = new WebScrap({
             title,

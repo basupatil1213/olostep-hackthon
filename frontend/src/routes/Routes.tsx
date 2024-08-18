@@ -1,6 +1,7 @@
 import { useRoutes } from "react-router-dom";
 import AuthPage from "../Pages/AuthPage";
 import WebScrap from "../Pages/WebScrap";
+import Dashboard from "../Pages/Dashboard";
 
 const Routes = () => {
     // Use the useRoutes hook to define routes
@@ -13,6 +14,10 @@ const Routes = () => {
         {
             path: "/scrap",
             element: <WebScrap />
+        },
+        {
+            path : "/dashboard",
+            element: <Dashboard/>
         }
     ]);
 
