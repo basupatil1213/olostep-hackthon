@@ -24,7 +24,7 @@ const NavBar: React.FC = () => {
         if (storedUser && storedUser !== "undefined") {
             setUser(JSON.parse(storedUser));
         }
-    }, []);
+    }, [localStorage]);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -37,7 +37,11 @@ const NavBar: React.FC = () => {
     return (
         <nav className="flex justify-between w-screen mx-10 items-center p-4 bg-gray-900 text-white shadow-lg">
             <div className="flex items-center">
-                <h1 className="text-3xl font-extrabold tracking-tight mr-8 text-white">Web Scrap</h1>
+                <Link to="/" className="text-3xl font-extrabold tracking-tight mr-8 text-white">
+                    {/* <Link to="/" className="no-underline"> */}
+                        Web Scrap
+                    {/* </Link> */}
+                </Link>
                 <div className="flex space-x-6">
                     <Link to="/scrap" className="text-lg font-medium hover:text-blue-400 transition-colors duration-200">
                         Scrap
