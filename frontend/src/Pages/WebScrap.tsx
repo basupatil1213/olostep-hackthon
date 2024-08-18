@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 const WebScrap = () => {
     const [url, setUrl] = React.useState<string>("");
     const [data, setData] = React.useState<{
-        title : string,
+        title: string,
         body: string
     } | null>(null);
 
@@ -14,7 +17,7 @@ const WebScrap = () => {
         if (!token) {
             navigate('/auth');
         }
-    })
+    });
 
     const handleScrap = async () => {
         try {
@@ -30,17 +33,18 @@ const WebScrap = () => {
             const data = await response.json();
             console.log(data);
             setData(data);
+            toast.success("Scraping successful!");
         } catch (err) {
             console.error(err);
-
+            toast.error("Failed to scrape data.");
         }
-    }
+    };
 
     const handleSave = async () => {
         try {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             if (!user.id) {
-                alert("User not found");
+                toast.error("User not found");
                 return;
             }
             const response = await fetch("http://localhost:5000/webscrap/save", {
@@ -52,23 +56,23 @@ const WebScrap = () => {
                 body: JSON.stringify({
                     title: data?.title,
                     body: data?.body,
-                    user : user.id
+                    user: user.id
                 }),
             });
             const respData = await response.json();
             console.log(respData);
-            alert(`Data saved with id: ${respData.id}`);
+            toast.success(`Data saved with id: ${respData.id}`);
         } catch (err) {
             console.error(err);
-            alert("Failed to save data");
-
+            toast.error("Failed to save data.");
         }
-    }
+    };
+
     return (
         <>
-            <Input value={url} setValue={setUrl}/>
+            <ToastContainer />
+            <Input value={url} setValue={setUrl} />
             <button onClick={handleScrap}>Scrap</button>
-            
             <button onClick={handleSave}>Save</button>
             <p>{data && <div>{data.title}</div>}</p>
             <p>Body</p>
