@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:14
+FROM node:21
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -19,7 +19,7 @@ EXPOSE 5000
 # Define environment variables
 ENV NODE_ENV=production
 ENV MONGO_URI=${MONGO_URI}
-ENV PORT=${PORT}
+ENV PORT=5000
 ENV JWT_SECRET=${JWT_SECRET}
 
 # Define the command to run the application
