@@ -9,6 +9,7 @@ type WebScrap = {
   url: string;
 };
 
+const BASE_URL = "https://webscraping-app-615396515843.us-east1.run.app";
 const Dashboard = () => {
   const [webscraps, setWebscraps] = useState<WebScrap[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -27,7 +28,7 @@ const Dashboard = () => {
     const fetchWebscraps = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:5000/webscrap/all", {
+        const response = await fetch(`${BASE_URL}/webscrap/all`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
