@@ -6,7 +6,7 @@ The Web Scraping Tool is a modern web application designed to extract and manage
 
 ## Architecture
 
-![Architecture Image][architecture.png]
+![Architecture Image](./architecture.png)
 
 ## Features
 
