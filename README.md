@@ -4,6 +4,10 @@
 
 The Web Scraping Tool is a modern web application designed to extract and manage data from various websites. It provides a user-friendly interface for scraping data, storing it in a database, and interacting with ChatGPT for insights and answers related to scraping tasks. Built with React, Tailwind CSS, and a variety of backend technologies, this tool aims to streamline the process of web scraping and data management.
 
+## Architecture
+
+![Architecture Image][architecture.png]
+
 ## Features
 
 - **Data Scraping**: Enter a URL to scrape data from any website.
