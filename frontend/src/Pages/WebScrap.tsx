@@ -106,7 +106,7 @@ const WebScrap = () => {
           Save
         </button>
       </div>
-      {error && <p className="text-red-500">{JSON.stringify(error?.message)}</p>}
+      {error !==  && <p className="text-red-500">{`Error in fetching Data, Please try again`}</p>}
       {data && (
         <div className="mt-4">
           <h2 className="text-2xl font-semibold mb-2">Title: {data.title}</h2>
