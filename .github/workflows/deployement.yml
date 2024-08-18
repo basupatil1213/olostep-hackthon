@@ -38,6 +38,10 @@ jobs:
           gcloud auth configure-docker us-east1-docker.pkg.dev
 
       - name: Build and Push Docker Image
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          PORT: ${{ secrets.PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f backend/Dockerfile.backend backend
           docker push ${{ env.DOCKER_IMAGE_URL }}:latest
