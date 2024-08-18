@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 export const register = async (email, password, name) => {
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
     if (user) {
         throw new Error("User already exists");
     }
@@ -14,12 +14,17 @@ export const register = async (email, password, name) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
-        email : email,
-        password : hashedPassword,
-        name : name,
+        email: email,
+        password: hashedPassword,
+        name: name,
     });
     await newUser.save();
-    return newUser;
+    const returnUser = await User.findOne({ email }).select("-password");
+
+    // Generate token
+    const token = jwt.sign({ id: returnUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' }); // Adjust token expiration as needed
+    console.log(`Successfully logged in: ${token}`);
+    return { token, user: returnUser };
 }
 
 export const login = async (email, password) => {
