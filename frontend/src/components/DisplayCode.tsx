@@ -14,12 +14,14 @@ const CodeSnippet = ({ displayCode }: CodeSnippetProps) => {
 
   useEffect(() => {
     if (codeRef.current) {
-      hljs.highlightElement(codeRef.current);
+      // Ensure previous highlights are cleared if necessary
+      const element = codeRef.current;
+      hljs.highlightElement(element);
     }
   }, [displayCode]);
 
   return (
-    <div className="text-white rounded-lg overflow-auto p-4 scroll-m-2 h-80  shadow-lg bg-gray-800">
+    <div className="text-white rounded-lg overflow-auto p-4 scroll-m-2 h-80 shadow-lg bg-gray-800">
       <pre className="whitespace-pre-wrap break-words">
         <code
           className="html"

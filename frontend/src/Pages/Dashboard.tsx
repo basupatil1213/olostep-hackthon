@@ -42,8 +42,8 @@ const Dashboard = () => {
         }
         const responseData = await response.json();
         setWebscraps(responseData.data);
-      } catch (err : any) {
-        setError(err.message || "An unexpected error occurred");
+      } catch (err) {
+        setError(err as string || "An unexpected error occurred");
       } finally {
         setLoading(false);
       }
