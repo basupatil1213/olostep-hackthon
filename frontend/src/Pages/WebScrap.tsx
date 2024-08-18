@@ -11,7 +11,7 @@ const WebScrap = () => {
     body: string;
   } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<object | null | unknown>(null);
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -26,11 +26,13 @@ const WebScrap = () => {
     setLoading(true);
     setError(null);
     try {
+        const token = localStorage.getItem("token");
+        console.log(`token: ${token}`);
       const response = await fetch(`${BASE_URL}/webscrap`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ url }),
       });
@@ -40,7 +42,7 @@ const WebScrap = () => {
       const data = await response.json();
       setData(data);
     } catch (err) {
-      setError(err as string || "An unexpected error occurred");
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -104,7 +106,7 @@ const WebScrap = () => {
           Save
         </button>
       </div>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-red-500">{JSON.stringify(error?.message)}</p>}
       {data && (
         <div className="mt-4">
           <h2 className="text-2xl font-semibold mb-2">Title: {data.title}</h2>
