@@ -4,18 +4,19 @@ import registerRouter from './routes/index.js';
 import { connectDB } from './config/dbConfig.js';
 
 const initialize = async (app) => {
-    app.use(cors(
-        {
-            origin: 'http://localhost:5173',
-            credentials: true
+    const allowedOrigins = ['http://localhost:5173', 'https://olostep-hackthon.vercel.app'];
+
+    app.use(cors({
+        origin: function (origin, callback) {
+            if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
         },
-        {
-            origin: 'https://olostep-hackthon.vercel.app/',
-            credentials: true
-        }
-    ));
-    // app.use(express.json());
-    // app.use(express.urlencoded());
+        credentials: true
+    }));
+
     app.use(express.json({ limit: '50mb' }));
     app.use(express.urlencoded({ limit: '50mb', extended: true })); 
     await connectDB();
