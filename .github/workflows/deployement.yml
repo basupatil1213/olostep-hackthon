@@ -6,6 +6,7 @@ env:
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   DOCKER_IMAGE_URL: us-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/webscraping-app/webscraping-app
+  SERVICE_NAME: webscraping-app
 
 on:
   push:
@@ -43,8 +44,7 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          echo SERVICE_NAME $SERVICE_NAME
-          gcloud run deploy $SERVICE_NAME \
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
             --image ${{ env.DOCKER_IMAGE_URL }}:latest \
             --platform managed \
             --region us-east1 \
