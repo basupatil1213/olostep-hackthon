@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CodeSnippet from "../components/DisplayCode";
+import { BASE_URL } from "../App";
 
 type WebScrap = {
   _id: string;
@@ -9,7 +10,6 @@ type WebScrap = {
   url: string;
 };
 
-const BASE_URL = "https://webscraping-app-615396515843.us-east1.run.app";
 const Dashboard = () => {
   const [webscraps, setWebscraps] = useState<WebScrap[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

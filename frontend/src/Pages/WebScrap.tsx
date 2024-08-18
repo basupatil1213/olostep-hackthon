@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
 import CodeSnippet from "../components/DisplayCode";
+import { BASE_URL } from "../App";
 
 const WebScrap = () => {
   const [url, setUrl] = useState<string>("");
@@ -25,7 +26,7 @@ const WebScrap = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:5000/webscrap", {
+      const response = await fetch(`${BASE_URL}/webscrap`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,7 +58,7 @@ const WebScrap = () => {
         alert("User not found");
         return;
       }
-      const response = await fetch("http://localhost:5000/webscrap/save", {
+      const response = await fetch(`${BASE_URL}/webscrap/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../App';
 
 const AuthForm = ({type} : {type : 'login' | 'register'}) => {
 
@@ -22,7 +23,7 @@ const AuthForm = ({type} : {type : 'login' | 'register'}) => {
     e.preventDefault();
     console.log(form);
     try {
-      const response = await fetch(`http://localhost:5000/auth/${type}`, {
+      const response = await fetch(`${BASE_URL}/auth/${type}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
