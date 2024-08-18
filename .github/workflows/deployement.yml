@@ -5,7 +5,7 @@ env:
   PORT: ${{ secrets.PORT }}
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
-  DOCKER_IMAGE_URL: us-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/webscraping-app
+  DOCKER_IMAGE_URL: us-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/webscraping-app/webscraping-app
 
 on:
   push:
