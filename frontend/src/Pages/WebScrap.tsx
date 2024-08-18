@@ -38,8 +38,8 @@ const WebScrap = () => {
       }
       const data = await response.json();
       setData(data);
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
+    } catch (err) {
+      setError(err as string || "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -75,7 +75,7 @@ const WebScrap = () => {
       }
       const respData = await response.json();
       alert(`Data saved with id: ${respData.id}`);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       alert("Failed to save data");
     }

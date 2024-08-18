@@ -1,9 +1,15 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+type User = {
+    _id: string;
+    name: string;
+    email: string;
+};
+
 const NavBar: React.FC = () => {
     const [token, setToken] = useState<string | null>(null);
-    const [user, setUser] = useState<{ name: string } | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -13,8 +19,9 @@ const NavBar: React.FC = () => {
         if (storedToken) {
             setToken(storedToken);
         }
-
-        if (storedUser) {
+        console.log(`storedUser: ${storedUser}`);
+        
+        if (storedUser && storedUser !== "undefined") {
             setUser(JSON.parse(storedUser));
         }
     }, []);
