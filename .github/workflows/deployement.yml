@@ -2,7 +2,6 @@ name: Deploy to Cloud Run
 
 env:
   MONGO_URI: ${{ secrets.MONGO_URI }}
-  PORT: 5000
   PROJECT_ID: ${{ secrets.PROJECT_ID }}
   JWT_SECRET: ${{ secrets.JWT_SECRET }}
   DOCKER_IMAGE_URL: us-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/webscraping-app/webscraping-app
@@ -40,7 +39,6 @@ jobs:
       - name: Build and Push Docker Image
         env:
           MONGO_URI: ${{ secrets.MONGO_URI }}
-          PORT: ${{ secrets.PORT }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f backend/Dockerfile.backend backend
@@ -53,4 +51,4 @@ jobs:
             --platform managed \
             --region us-east1 \
             --allow-unauthenticated \
-            --set-env-vars PORT=${{ env.PORT }}
+            --set-env-vars MONGO_URI=${{ secrets.MONGO_URI }},JWT_SECRET=${{ secrets.JWT_SECRET }}
