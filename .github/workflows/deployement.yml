@@ -1,159 +1,51 @@
-name: Create custom image
+name: Deploy to Cloud Run
+
+env:
+  MONGO_URI : ${{ secrets.MONGO_URI }}
+  PORT : ${{ secrets.PORT }}
+  PROJECT_ID : ${{ secrets.PROJECT_ID }}
+  JWT_SECRET : ${{ secrets.JWT_SECRET }}
+  DOCKER_IMAGE_URL : us-east1-docker.pkg.dev/${{ secrets.PROJECT_ID }}/webscraping-app
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
-    types: [closed]
-
-env:
-  PRODUCT_VERSION: "1.8.6" # or: "latest"
 
 jobs:
-  job_id:
+  dockerize-and-deploy:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-      - id: "auth"
-        uses: "google-github-actions/auth@v2"
+      - name: Google Cloud Auth
+        uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          project_id: ${{ env.PROJECT_ID }}
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v2"
+      - name: Set up Cloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
 
-      - name: "Use gcloud CLI"
-        run: "gcloud info"
-
-      - name: Zip webapp
-        run: zip -r webapp.zip .
-
-      - name: Setup HashiCorp Packer
-        uses: hashicorp/setup-packer@v3.0.0
-
-      - name: Initialize Packer template
-        run: packer init packer/
-
-      - name: Format Packer template
-        run: packer fmt -check packer/
-
-      - name: echo present working directory
-        run: pwd
-
-      - name: Validate Packer template
-        env:
-          ACCOUNT_FILE: ${{ secrets.GCP_CREDENTIALS }}
-          SOURCE_IMAGE_FAMILY: ${{ secrets.SOURCE_IMAGE_FAMILY }}
-          SOURCE_IMAGE_NAME: ${{ secrets.SOURCE_IMAGE_NAME }}
-          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-          ZONE: ${{ secrets.ZONE }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-        run: packer validate --var "account_file_json_key=$ACCOUNT_FILE" --var "source_image_family=$SOURCE_IMAGE_FAMILY" --var "source_image_name=$SOURCE_IMAGE_NAME" --var "ssh_username=$SSH_USERNAME" --var "zone=$ZONE" --var "project_id=$PROJECT_ID" packer/
-
-      - name: Build the Packer
-        id: packer
-        env:
-          ACCOUNT_FILE: ${{ secrets.GCP_CREDENTIALS }}
-          SOURCE_IMAGE_FAMILY: ${{ secrets.SOURCE_IMAGE_FAMILY }}
-          SOURCE_IMAGE_NAME: ${{ secrets.SOURCE_IMAGE_NAME }}
-          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-          ZONE: ${{ secrets.ZONE }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      - name: Configure Docker
         run: |
-          packer build \
-              -var "account_file_json_key=$ACCOUNT_FILE" \
-              -var "source_image_family=$SOURCE_IMAGE_FAMILY" \
-              -var "ssh_username=$SSH_USERNAME" \
-              -var "zone=$ZONE" \
-              -var "project_id=$PROJECT_ID" \
-              packer/
-          echo NEW_IMAGE=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2) >> $GITHUB_ENV
+          gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      - name: Create new instance template
-        id: create-template
-        env:
-          INSTANCE_TEMPLATE_NAME: instance-template-${{ env.NEW_IMAGE }}
-          VM_REGION: ${{ secrets.VM_REGION }}
-          VM_MACHINE_TYPE: ${{ secrets.VM_MACHINE_TYPE }}
-          VM_SERVICE_ACCOUNT_EMAIL: ${{ secrets.VM_SERVICE_ACCOUNT_EMAIL }}
-          VM_SUBNETWORK: ${{ secrets.VM_SUBNETWORK }}
-          VM_NETWORK_TIER: ${{ secrets.VM_NETWORK_TIER }}
-          VM_HTTP_TARGET_TAGS: ${{ secrets.VM_HTTP_TARGET_TAGS }}
-          MONGO_URI: ${{ secrets.MONGO_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          PORT: ${{ secrets.PORT }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-          PUBSUB_TOPIC_NAME: ${{ secrets.PUBSUB_TOPIC_NAME }}
-          KMS_KEY_RING: ${{ secrets.KMS_KEY_RING }}
-          VM_KMS_KEY: ${{ secrets.VM_KMS_KEY }}
-
+      - name: Build and Push Docker Image
         run: |
-          gcloud compute instance-templates create ${{env.INSTANCE_TEMPLATE_NAME}} \
-              --project=${{env.PROJECT_ID}} \
-              --region=${{ env.VM_REGION }} \
-              --instance-template-region=${{env.VM_REGION}} \
-              --machine-type=${{env.VM_MACHINE_TYPE}} \
-              --tags=${{env.VM_HTTP_TARGET_TAGS}} \
-              --service-account=${{env.VM_SERVICE_ACCOUNT_EMAIL}} \
-              --network-tier=${{env.VM_NETWORK_TIER}} \
-              --subnet=${{env.VM_SUBNETWORK}} \
-              --image=${{env.NEW_IMAGE}} \
-              --boot-disk-type=pd-standard \
-              --boot-disk-kms-key=projects/${{ env.PROJECT_ID }}/locations/${{ env.VM_REGION }}/keyRings/${{ env.KMS_KEY_RING}}/cryptoKeys/${{ env.VM_KMS_KEY }} \
-              --scopes=https://www.googleapis.com/auth/cloud-platform \
-              --metadata=startup-script='#! /bin/bash
-                port=${{env.PORT}}
-                mongo_uri=${{env.MONGO_URI}}
-                jwt_secret=${{env.JWT_SECRET}}
-                node_env="production"
-                webapp_url=basavarajpatil.me
-                pubsub_topic_url="projects/${{ env.PROJECT_ID }}/topics/${{ env.PUBSUB_TOPIC_NAME }}"
-                cd /opt/projects/webapp
-                sudo touch .env
-                echo "PORT=${port}" >> /opt/projects/webapp/.env
-                echo "MONGO_URI=${mongo_uri}" >> /opt/projects/webapp/.env
-                echo "JWT_SECRET=${jwt_secret}" >> /opt/projects/webapp/.env
-                echo "NODE_ENV=production" >> /opt/projects/webapp/.env
-                echo "WEBAPP_URL=basavarajpatil.me" >> /opt/projects/webapp/.env
-                echo "PUBSUB_TOPIC_URL=projects/${{ env.PROJECT_ID }}/topics/${{ env.PUBSUB_TOPIC_NAME }}" >> /opt/projects/webapp/.env'
+          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f backend/Dockerfile.backend backend
+          docker push ${{ env.DOCKER_IMAGE_URL }}:latest
 
-
-      - name: Set instance template for managed instance group
-        id: set-template
-        env:
-          INSTANCE_TEMPLATE_NAME: instance-template-${{ env.NEW_IMAGE }}
-          INSTANCE_GROUP: ${{ secrets.INSTANCE_GROUP }}
-          REGION: ${{ secrets.INSTACE_GROUP_REGION }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      - name: Deploy to Cloud Run
         run: |
-          gcloud compute instance-groups managed set-instance-template ${{env.INSTANCE_GROUP}} \
-              --template=projects/${{env.PROJECT_ID}}/regions/${{env.REGION}}/instanceTemplates/${{env.INSTANCE_TEMPLATE_NAME}} \
-              --region=${{env.REGION}} \
-              --project=${{env.PROJECT_ID}}
-
-      - name: Start rolling update
-        id: start-update
-        env:
-          INSTANCE_TEMPLATE_NAME: instance-template-${{ env.NEW_IMAGE }}
-          INSTANCE_GROUP: ${{ secrets.INSTANCE_GROUP }}
-          REGION: ${{ secrets.INSTACE_GROUP_REGION }}
-          PROJECT_ID: ${{ secrets.PROJECT_ID }}
-        run: |
-          gcloud compute instance-groups managed rolling-action start-update ${{env.INSTANCE_GROUP}} \
-              --version=template=projects/${{env.PROJECT_ID}}/regions/${{env.REGION}}/instanceTemplates/${{env.INSTANCE_TEMPLATE_NAME}} \
-              --max-unavailable=0 \
-              --region=${{env.REGION}} \
-              --project=${{env.PROJECT_ID}}
-
-      - name: Wait for rolling update to complete
-        id: wait-update
-        env:
-          REGION: ${{ secrets.INSTACE_GROUP_REGION }}
-          INSTANCE_GROUP: ${{ secrets.INSTANCE_GROUP }}
-        run: |
-            gcloud compute instance-groups managed wait-until ${{env.INSTANCE_GROUP}} \
-              --stable \
-              --region=${{ env.REGION }}
+          echo SERVICE_NAME $SERVICE_NAME
+          gcloud run deploy $SERVICE_NAME \
+            --image ${{ env.DOCKER_IMAGE_URL }}:latest \
+            --platform managed \
+            --region us-east1 \
+            --allow-unauthenticated
