@@ -11,7 +11,7 @@ const WebScrap = () => {
     body: string;
   } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<object | null | unknown>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
@@ -41,8 +41,12 @@ const WebScrap = () => {
       }
       const data = await response.json();
       setData(data);
-    } catch (err) {
-      setError(err);
+    } catch (err : unknown) {
+        if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            setError("An unknown error occurred");
+          }
     } finally {
       setLoading(false);
     }
@@ -106,7 +110,7 @@ const WebScrap = () => {
           Save
         </button>
       </div>
-      {error !==  && <p className="text-red-500">{`Error in fetching Data, Please try again`}</p>}
+      {error && <p className="text-red-500">{error}</p>}
       {data && (
         <div className="mt-4">
           <h2 className="text-2xl font-semibold mb-2">Title: {data.title}</h2>
