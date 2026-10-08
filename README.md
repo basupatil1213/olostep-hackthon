@@ -38,8 +38,8 @@ The Web Scraping Tool is a modern web application designed to extract and manage
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/web-scraping-tool.git
-   cd web-scraping-tool```
+   git clone https://github.com/basupatil1213/olostep-hackthon.git
+   cd olostep-hackthon```
 2. **Install Frontend Dependencies**
     Navigate to the frontend directory and install the necessary packages:
     ```bash
